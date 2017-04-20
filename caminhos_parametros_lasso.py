@@ -94,15 +94,10 @@ def caminhosParametrosLasso(medidas_A, observacoes_b, subdivisoes): #{
         ultimoThetaISTA = np.matrix(np.zeros(shape=(medidas_A.shape[1],1)))
         ultimoThetaFISTA = np.matrix(np.zeros(shape=(medidas_A.shape[1],1)))
 
-#        novoThetaISTA = lss.ISTA(medidas_A, ultimoThetaISTA, observacoes_b, opcoes_lasso_gd)
         novoThetaISTA = ultimoThetaISTA.copy()
-#        novoThetaFISTA = lss.FISTA(medidas_A, ultimoThetaFISTA, observacoes_b, opcoes_lasso_gd)
         novoThetaFISTA = ultimoThetaISTA.copy()
-        #novoThetaFISTACD = lsscd.FISTA_CD(medidas_A, ultimoThetaFISTACD, observacoes_b, opcoes_lasso_cd)
         novoThetaFISTACD = ultimoThetaISTA.copy()
-        #novoThetaISTACD = lsscd.ISTA_CD(medidas_A, ultimoThetaISTACD, observacoes_b, opcoes_lasso_cd)
         novoThetaISTACD = ultimoThetaISTA.copy()
-        #novoThetaISTACD_ant = lsscd.ISTA_CD_2(medidas_A, observacoes_b, ultimoThetaISTA_antCD, lmbda/medidas_A.shape[0], 5000)
         novoThetaISTACD_ant = ultimoThetaISTA.copy()
         novoThetaSPAMS = FISTASpams(medidas_A, observacoes_b, ultimoThetaSPAMS, lmbda, 1000)
 
@@ -199,104 +194,23 @@ def teste_caminhosParametrosLasso(): #{
     elapsed = time.time() - t0
     print "Tempo:", elapsed
 
-#    for j in range(valoresTheta.shape[1]):
-#        print "[%f  %f  %f] <-> [%f  %f  %f]" % (valoresTheta[0,j], valoresTheta[1,j], valoresTheta[2,j], \
-#                       valoresThetaSPAMS[0,j], valoresThetaSPAMS[1,j], valoresThetaSPAMS[2,j])
-#    y1 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y2 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y3 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y4 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    print "FISTACD / ISTACD / IstaCd2 / SPAMSFISTA / ISTA / FISTA"
-#    for j in range(valoresThetaFISTACD.shape[1]):
-#        print "[%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f]" % \
-#                        (valoresThetaFISTACD[0,j], valoresThetaFISTACD[1,j], valoresThetaFISTACD[2,j], valoresThetaFISTACD[3,j], \
-#                         valoresThetaISTACD[0,j], valoresThetaISTACD[1,j], valoresThetaISTACD[2,j], valoresThetaISTACD[3,j], \
-#                         valoresThetaISTA_antCD[0,j], valoresThetaISTA_antCD[1,j], valoresThetaISTA_antCD[2,j], valoresThetaISTA_antCD[3,j], \
-#                         valoresThetaSPAMS[0,j], valoresThetaSPAMS[1,j], valoresThetaSPAMS[2,j], valoresThetaSPAMS[3,j], \
-#                         valsISTA[0,j], valsISTA[1,j], valsISTA[2,j], valsISTA[3,j], \
-#                         valsFISTA[0,j], valsFISTA[1,j], valsFISTA[2,j], valsFISTA[3,j])
-    print "Tempo:", elapsed
-#
-#    y1[:] = valoresThetaFISTACD[0,:]
-#    y2[:] = valoresThetaFISTACD[1,:]
-#    y3[:] = valoresThetaFISTACD[2,:]
-#    y4[:] = valoresThetaFISTACD[3,:]
-#
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y1)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y2)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y3)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y4)
-#    plt.show()
-
-#    y1[:] = valoresThetaISTACD[0,:]
-#    y2[:] = valoresThetaISTACD[1,:]
-#    y3[:] = valoresThetaISTACD[2,:]
-#    y4[:] = valoresThetaISTACD[3,:]
-
     for i in xrange(valoresThetaISTACD.shape[0]):
-        #plt.plot(range(valoresThetaISTACD.shape[1]), valoresThetaISTACD[i,:])
         rw = np.zeros(shape=(valoresThetaISTACD.shape[1],))
         rw[:] = valoresThetaISTACD[i,:]
         plt.plot(rw)
     plt.show()
 
-#    y1[:] = valoresThetaISTA_antCD[0,:]
-#    y2[:] = valoresThetaISTA_antCD[1,:]
-#    y3[:] = valoresThetaISTA_antCD[2,:]
-#    y4[:] = valoresThetaISTA_antCD[3,:]
-
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y1)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y2)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y3)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y4)
-#    plt.show()
-
-
-#    y1[:] = valoresThetaSPAMS[0,:]
-#    y2[:] = valoresThetaSPAMS[1,:]
-#    y3[:] = valoresThetaSPAMS[2,:]
-#    y4[:] = valoresThetaSPAMS[3,:]
-
     for i in xrange(valoresThetaSPAMS.shape[0]):
         plt.plot(range(valoresThetaSPAMS.shape[1]), valoresThetaSPAMS[i,:])
     plt.show()
-
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y1)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y2)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y3)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y4)
-#    plt.show()
-#
-#    y1[:] = valsISTA[0,:]
-#    y2[:] = valsISTA[1,:]
-#    y3[:] = valsISTA[2,:]
-#    y4[:] = valsISTA[3,:]
-#
-#    plt.plot(range(valsISTA.shape[1]), y1)
-#    plt.plot(range(valsISTA.shape[1]), y2)
-#    plt.plot(range(valsISTA.shape[1]), y3)
-#    plt.plot(range(valsISTA.shape[1]), y4)
-#    plt.show()
-#
-#    y1[:] = valsFISTA[0,:]
-#    y2[:] = valsFISTA[1,:]
-#    y3[:] = valsFISTA[2,:]
-#    y4[:] = valsFISTA[3,:]
-#
-#    plt.plot(range(valsFISTA.shape[1]), y1)
-#    plt.plot(range(valsFISTA.shape[1]), y2)
-#    plt.plot(range(valsFISTA.shape[1]), y3)
-#    plt.plot(range(valsFISTA.shape[1]), y4)
-#    plt.show()
-
 #}
 #}}}
 
 
-#{{{ teste_caminhosParametrosLasso
+#{{{ teste_caminhosParametrosLasso_TSMF
 def teste_caminhosParametrosLasso_TSMF(): #{   
     print "\nTestando caminhos das solucoes"
-    print "Teste Lasso CD"
+    print "Teste Lasso CD TSMF"
     # Geracao do dado sintetico de teste
     # Sao gerados 10 pontos para se fazer o ajuste de uma curva de ate 3 grau
     SZ = 10
@@ -346,62 +260,9 @@ def teste_caminhosParametrosLasso_TSMF(): #{
     (valoresThetaFISTACD, valoresThetaISTACD, valoresThetaISTA_antCD, valoresThetaSPAMS, valsISTA, valsFISTA) = caminhosParametrosLasso(A1, b, 100)
     elapsed = time.time() - t0
     print "Tempo:", elapsed
-#    for j in range(valoresTheta.shape[1]):
-#        print "[%f  %f  %f] <-> [%f  %f  %f]" % (valoresTheta[0,j], valoresTheta[1,j], valoresTheta[2,j], \
-#                       valoresThetaSPAMS[0,j], valoresThetaSPAMS[1,j], valoresThetaSPAMS[2,j])
-#    y1 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y2 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y3 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    y4 = np.array(valoresThetaFISTACD.shape[1] * [0.0])
-#    print "FISTACD / ISTACD / IstaCd2 / SPAMSFISTA / ISTA / FISTA"
-#    for j in range(valoresThetaFISTACD.shape[1]):
-#        print "[%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f] / [%.3f %.3f %.3f %.3f]" % \
-#                        (valoresThetaFISTACD[0,], valoresThetaFISTACD[1,j], valoresThetaFISTACD[2,j], valoresThetaFISTACD[3,j], \
-#                         valoresThetaISTACD[0,j], valoresThetaISTACD[1,j], valoresThetaISTACD[2,j], valoresThetaISTACD[3,j], \
-#                         valoresThetaISTA_antCD[0,j], valoresThetaISTA_antCD[1,j], valoresThetaISTA_antCD[2,j], valoresThetaISTA_antCD[3,j], \
-#                         valoresThetaSPAMS[0,j], valoresThetaSPAMS[1,j], valoresThetaSPAMS[2,j], valoresThetaSPAMS[3,j], \
-#                         valsISTA[0,j], valsISTA[1,j], valsISTA[2,j], valsISTA[3,j], \
-#                         valsFISTA[0,j], valsFISTA[1,j], valsFISTA[2,j], valsFISTA[3,j])
-
-#    y1[:] = valoresThetaFISTACD[0,:]
-#    y2[:] = valoresThetaFISTACD[1,:]
-#    y3[:] = valoresThetaFISTACD[2,:]
-#    y4[:] = valoresThetaFISTACD[3,:]
-#
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y1)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y2)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y3)
-#    plt.plot(range(valoresThetaFISTACD.shape[1]), y4)
-#    plt.show()
-
-#    y1[:] = valoresThetaISTACD[0,:]
-#    y2[:] = valoresThetaISTACD[1,:]
-#    y3[:] = valoresThetaISTACD[2,:]
-#    y4[:] = valoresThetaISTACD[3,:]
 
     fmt = ['r-','g-','b-','k-','c-','m-','y-']
 
-#    for i in xrange(valoresThetaISTACD.shape[0]):
-#        plt.plot(valoresThetaISTACD[i,:], fmt[i%7])
-#    plt.show()
-
-#    plt.plot(range(valoresThetaISTACD.shape[1]), y1)
-#    plt.plot(range(valoresThetaISTACD.shape[1]), y2)
-#    plt.plot(range(valoresThetaISTACD.shape[1]), y3)
-#    plt.plot(range(valoresThetaISTACD.shape[1]), y4)
-#    plt.show()
-#
-#    y1[:] = valoresThetaISTA_antCD[0,:]
-#    y2[:] = valoresThetaISTA_antCD[1,:]
-#    y3[:] = valoresThetaISTA_antCD[2,:]
-#    y4[:] = valoresThetaISTA_antCD[3,:]
-#
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y1)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y2)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y3)
-#    plt.plot(range(valoresThetaISTA_antCD.shape[1]), y4)
-#    plt.show()
-#
     arow = np.array(valoresThetaSPAMS.shape[1] * [0.0])
     for i in xrange(valoresThetaSPAMS.shape[0]):
         arow[:] = valoresThetaSPAMS[i,:]
@@ -409,42 +270,8 @@ def teste_caminhosParametrosLasso_TSMF(): #{
         if (i % 10)==0:
             print "%d/%d" % (i, valoresThetaSPAMS.shape[0])
     plt.show()
-
-#    y1[:] = valoresThetaSPAMS[0,:]
-#    y2[:] = valoresThetaSPAMS[1,:]
-#    y3[:] = valoresThetaSPAMS[2,:]
-#    y4[:] = valoresThetaSPAMS[3,:]
-#
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y1)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y2)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y3)
-#    plt.plot(range(valoresThetaSPAMS.shape[1]), y4)
-#    plt.show()
-
-#    y1[:] = valsISTA[0,:]
-#    y2[:] = valsISTA[1,:]
-#    y3[:] = valsISTA[2,:]
-#    y4[:] = valsISTA[3,:]
-#
-#    plt.plot(range(valsISTA.shape[1]), y1)
-#    plt.plot(range(valsISTA.shape[1]), y2)
-#    plt.plot(range(valsISTA.shape[1]), y3)
-#    plt.plot(range(valsISTA.shape[1]), y4)
-#    plt.show()
-#
-#    y1[:] = valsFISTA[0,:]
-#    y2[:] = valsFISTA[1,:]
-#    y3[:] = valsFISTA[2,:]
-#    y4[:] = valsFISTA[3,:]
-#
-#    plt.plot(range(valsFISTA.shape[1]), y1)
-#    plt.plot(range(valsFISTA.shape[1]), y2)
-#    plt.plot(range(valsFISTA.shape[1]), y3)
-#    plt.plot(range(valsFISTA.shape[1]), y4)
-#    plt.show()
 #}
 #}}}
-
 
 
 if __name__ == "__main__":
