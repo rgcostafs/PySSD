@@ -43,7 +43,6 @@ def amplitudesDoArtigoComRuido2(percentual, angulo=-30., frequencia=30.): #{
 def exibirAmplitudesArtigo(ang, freq): #{
     amplitudeSismica = amplitudesArtigo(ang, freq)
     lims = (np.min(amplitudeSismica), np.max(amplitudeSismica))
-    print "sao estes os limites dos valores de amplitude (sem ruido):", lims
     cmap = 'spectral'
     imgplot = plt.imshow(amplitudeSismica, clim=lims, cmap=cmap)
     plt.colorbar()
@@ -82,7 +81,6 @@ def plotTimeFreqSignal(ySinal1, ySinal2, freqSinal, tempoMaximo):
 
 
 def exibirAmplitudesComRuido(ruido = 0.05, angulo = -30., frequencia = 30.):#{
-    print "exibindo amplitudes com ruido"
     semRuido = amplitudesArtigo(angulo, frequencia)
     amplitudeSismicaR = amplitudesDoArtigoComRuido2(ruido, angulo, frequencia)
     diferenca = amplitudeSismicaR - semRuido
@@ -110,7 +108,6 @@ def exibirAmplitudesComRuido(ruido = 0.05, angulo = -30., frequencia = 30.):#{
     
     semRuido2 = amplitudesArtigo(angulo, frequencia)
     sinal2 = semRuido2[:,1]
-    
 
     plotTimeFreqSignal(sig, sinal2, freq, tempoMaximo)
 #}
