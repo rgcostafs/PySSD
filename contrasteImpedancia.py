@@ -11,7 +11,7 @@ import scipy
 
 import modeloMarmousi203
 
-def constrateImpedancia(velocidade, densidade): #{
+def contrasteImpedancia(velocidade, densidade): #{
     res = np.zeros(velocidade.shape)
     velprox = velocidade[1:]
     velprev = velocidade[:-1]
@@ -31,12 +31,10 @@ def geraConstrasteImpedancia200TracosModelo(): #{
     selectedTraces = modeloMarmousi203.selecionarTracosExemplo()[::10,:]
     selectedDensities = modeloMarmousi203.selecionarTracosDensidadeExemplo()[::10,:]
     
-    
     selectedTraces2 = np.zeros(shape=(selectedTraces.shape[0], 800), dtype=np.float32)
     selectedDensities2 = np.zeros(shape=(selectedDensities.shape[0], 800), dtype=np.float32)
 
     xnew = np.linspace(0.0,1.0,800)
-    #print "xnew.shape:", xnew.shape
     for i in range(selectedTraces.shape[0]):
         xold = np.linspace(0.0,1.0,selectedTraces.shape[1])
         velref = selectedTraces[i,:].ravel()
@@ -48,15 +46,9 @@ def geraConstrasteImpedancia200TracosModelo(): #{
         f = scipy.interpolate.interp1d(xoldD,denref,kind='nearest')
         selectedDensities2[i,:] = f(xnew)
 
-
-    #densidade = np.asarray(selectedTraces2.shape[1]*[1.0], dtype=np.float64)
-    #print "densidade.shape:", densidade.shape
     genReflect = np.zeros(shape=(selectedTraces2.shape[0],selectedTraces2.shape[1]), dtype=np.float64)
-    #print "genReflect.shape:", genReflect.shape
     for i in range(selectedTraces.shape[0]):
-        #print "selectedTraces2[i,:].ravel().shape:", selectedTraces2[i,:].ravel().shape
-        #print "densidade.ravel().shape:", densidade.ravel().shape
-        genReflect[i,:] = constrateImpedancia(selectedTraces2[i,:].ravel(), selectedDensities2[i,:].ravel())
+        genReflect[i,:] = contrasteImpedancia(selectedTraces2[i,:].ravel(), selectedDensities2[i,:].ravel())
     return genReflect
 #}
 
@@ -103,8 +95,6 @@ def exibirConstrateImpedancia200TracosModelo(): #{
     freq = 1000.0
     tMax = 0.8
     plotTimeFreqSignal(sinal, freq, tMax)
-    
-
 #}
 
 if __name__ == "__main__":
