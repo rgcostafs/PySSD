@@ -69,7 +69,7 @@ for met in ["OMP", "FistaTSMF", "NLasso"]:
         d2 = d*d
         print "SUM((W_i - wav_i)**2) = ", np.sum(d2)
 
-        print "***** Avaliacao da reconstrucao *****"
+        print "***** Evaluation of the reconstruction *****"
         (minv, maxv) = (np.min(tracosAmplitude), np.max(tracosAmplitude))
         erro = tracosAmplitude - A*R
         erro2 = np.linalg.norm(erro.T)**2
