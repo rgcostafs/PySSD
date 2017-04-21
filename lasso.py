@@ -38,7 +38,6 @@ def limiarizacaoSuave2(x, lda):
         return x
 #}}}
 
-
 #{{{ custoLasso
 def custoLasso(A, x, b, lmbda, fator = 1.0):
     mA = np.matrix(A)
