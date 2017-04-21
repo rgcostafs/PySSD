@@ -28,7 +28,6 @@ import lasso_cd
 import normalizacao as nrm
 
 
-# FUNCIONA!!!
 def inicializacaoThetaOMP(matrizMedidasA, y, K): #{
     mm = matrizMedidasA.copy()
     szs = []
@@ -49,8 +48,6 @@ def inicializacaoThetaOMP(matrizMedidasA, y, K): #{
 
 def FusedLassoFistaFlatSpams(A, observacoesY, thetaParametros, lambda1, lambda2, lambda3): #{
 
-    #(matA, szA) = normalizacaoMatrizNorma1(A) 
-    #(matA, maxA) = normalizacaoMatrizMaximo1(A) 
     matA = A
 
     myfloat = np.float64
@@ -107,15 +104,9 @@ def FusedLassoFistaFlatSpams(A, observacoesY, thetaParametros, lambda1, lambda2,
 
     W0 = np.zeros((X.shape[1],Y.shape[1]),dtype=myfloat,order="FORTRAN")
     
-    # faco a copia do valor anteriormente obtido
     W0[:] = thetaParametros[:]
     
-    print "shapes: X: ", X.shape, "Y:", Y.shape
-
     (W, optim_info) = spams.fistaFlat(Y,X,W0,True,**param)
-
-#    for j in range(W.shape[0]):
-#        W[j,:] = W[j,:] * szA[j]
 
     return W
 #}
@@ -185,7 +176,6 @@ def FistaTSMF(A, x, b, sparsK, thres):
         if (np.linalg.norm(diff) < thres):
             break
     #}
-    print "iteracoes:", k
     return rk
 #}}}
 
@@ -198,7 +188,7 @@ def TSMF2(matrizObservacoesY, esparsidadeK, toeplitzA0, waveletInicial, lambda1 
     convergiu = False
     yTil = np.matrix(matrizObservacoesY.T.flatten()).T
     numTracos = matrizObservacoesY.shape[1] # o numero de tracos eh o numero de colunas na matriz das observacoes
-    print "Numero de tracos:", numTracos
+    # print "Numero de tracos:", numTracos
     # inicializa a matriz de refletividades SEM REFLETORES
     matrizRefletividade = np.matrix(np.zeros(shape=matrizObservacoesY.shape))
     nl = np.prod(matrizRefletividade.shape)
@@ -206,16 +196,16 @@ def TSMF2(matrizObservacoesY, esparsidadeK, toeplitzA0, waveletInicial, lambda1 
     nc = max(waveletInicial.shape)
     hf = matrizRefletividade.shape[0]
     alphaKmenos1 = matrizToeplitz06.ToeplitzParaAlpha3(toeplitzA0, waveletInicial)
-    print "verificando validade das informacoes de wavelet"
-    print "formato da matriz alphaKmenos1:", alphaKmenos1.shape
-    print "formato da matriz de Toeplitz passada:", toeplitzA0.shape
-    print "formato da waveletInicial:", waveletInicial.shape
+    #print "verificando validade das informacoes de wavelet"
+    #print "formato da matriz alphaKmenos1:", alphaKmenos1.shape
+    #print "formato da matriz de Toeplitz passada:", toeplitzA0.shape
+    #print "formato da waveletInicial:", waveletInicial.shape
     # ajuste dos valores da wavelet (desfeito para FistaTSMF, feito para OMP sem reajuste)
     maxv = np.max(np.abs(alphaKmenos1))
     alphaKmenos1 = alphaKmenos1 / maxv
-    print "ref.shape:", ref.shape
+    #print "ref.shape:", ref.shape
     matrizToeplitzA = matrizToeplitz06.alphaParaToeplitz3(alphaKmenos1, ref)
-    print "Formato da matriz antes de processar:", matrizToeplitzA.shape
+    #print "Formato da matriz antes de processar:", matrizToeplitzA.shape
     np.savez(diretorio+"argumentos", numTracos=numTracos, lambda1=lambda1, lambda2=lambda2, lambda3=lambda3, waveletInicial=waveletInicial, referencia=ref)
 
     opcoes = {"retornar_log" : False, "iteracoes" : 5000, \
@@ -264,7 +254,7 @@ def TSMF2(matrizObservacoesY, esparsidadeK, toeplitzA0, waveletInicial, lambda1 
 
             if fazerAjuste: #{
                 refletMin = np.min(np.abs(rjk)) # o valor minimo pode ser zero
-                print "tentando aplicar MQO depois da selecao de variaveis"
+                #print "tentando aplicar MQO depois da selecao de variaveis"
                 parametros_x = rjk.copy()
                 indices_selecionados = []
                 for i in xrange(parametros_x.shape[0]):
@@ -330,7 +320,7 @@ def TSMF2(matrizObservacoesY, esparsidadeK, toeplitzA0, waveletInicial, lambda1 
     
         cst = custoFatoracaoEsparsaMatrizToeplitz(matrizToeplitzA, Rk, matrizObservacoesY, lambda1, lambda2, lambda3, gabaritoWavelet=alphaK)
         convergiu = abs(cst - custoAnterior) < 1e-4
-        print "Custo depois de 'otimizar' a matriz de Toeplitz: ", cst
+        # print "Custo depois de 'otimizar' a matriz de Toeplitz: ", cst
         
         logCusto.append(cst)
         if (not convergiu):
@@ -342,7 +332,7 @@ def TSMF2(matrizObservacoesY, esparsidadeK, toeplitzA0, waveletInicial, lambda1 
             if (k==50):
                 break
     #}
-    print "Rodou %d iteracoes" % k
+    print "! %d iterations" % k
     np.savez(diretorio+"resultados", matrizRefletividade=matrizRefletividade, matrizToeplitzA=matrizToeplitzA, matrizObservacoesY=matrizObservacoesY)
     return(matrizToeplitzA, matrizRefletividade, logCusto)
 #}}}
@@ -356,33 +346,28 @@ from amplitudes05 import *
 import matrizToeplitz06
 
 #{{{ Teste de execucao do procedimento de Wang et al. (2016)
-def testeValendo():
-    print "E1"
+def mainTest():
     refletividades = geraConstrasteImpedancia200TracosModelo()
-    print "E2"
     exibirConstrateImpedancia200TracosModelo()
-    print "E3"
     refletividadesSelecionadas = refletividades[::10]
     ruido = 0.05
     angulo = -45.0
     freq = 30.0
-    print "Usando uma ricker com angulo de %.2f e frequencia dominante de %.2f" % (angulo, freq)
-    print "E4"
+    print "Using ricker with angle %.2f and dominant freq %.2f" % (angulo, freq)
     exibeRickerDeAcordoComOArtigo2(angulo, freq)
-    print "E5"
     exibirAmplitudesComRuido(ruido, angulo, freq)
     #observacoes = np.asfortranarray(amplitudesDoArtigoComRuido2(ruido, angulo, freq)[:,::10])
     #np.save("observacoes_multi", observacoes) # deixar salvando somente na primeira rodada.
     observacoes = np.asfortranarray(np.matrix(np.load("observacoes_multi.npy")))
-    print "forma das observacoes: ", observacoes.shape
+    # print "forma das observacoes: ", observacoes.shape
 
     ref = geraConstrasteImpedancia200TracosModelo()[2]
     np.save("refletividade_2", ref)
-    print "Salvei a refletividade"
+    # print "Salvei a refletividade"
     
     ric = geraRickerDeAcordoComOArtigo2(-30., 30.)
     np.save("wav_gabarito", ric)
-    print "Salvei a wavelet gabarito"
+    # print "Salvei a wavelet gabarito"
     
     # NAO EH NECESSARIO normalizar as observacoes
     #tracosAmplitude = np.matrix(observacoes.copy().reshape(len(observacoes),1)) # para o caso de usar somente 1 traco
@@ -401,11 +386,11 @@ def testeValendo():
     l3 =  max(0.02, ruido / 5.)
 
     dt = time.localtime()
-    print "#####\nParametros de execucao:"
-    print "hora: ", time.time()
+    print "#####\nExecution params:"
+    print "time: ", time.time()
     strinstante = "%04d_%02d_%02d_%02d_%02d_%02d" % (dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min, dt.tm_sec)
     os.makedirs(strinstante, 0755)
-    print "data/hora: ", strinstante
+    print "date/time: ", strinstante
     print "l1: ", l1
     print "l2: ", l2
     print "l3: ", l3
@@ -418,13 +403,13 @@ def testeValendo():
 
     # A matriz características é formada pela multiplicacao da matriz de Toeplitz e da matriz de refletividade
     # Todas as caracteristicas tem a mesma faixa de valores e o mesmo peso. Portanto, nao eh necessario normalizar.
-    print "exibindo a wavelet inicial"
+    print "this the initial wavelet"
     plt.plot(waveletInicial,'b-',linewidth=3.0)
     plt.show()
-    print "exibindo as refletividades de referencia"
+    print "showing reference refletivities"
     plt.plot(ref,'r-',linewidth=3.0)
     plt.show()
-    print "exibindo as observacoes que sao resultado da convolucao da wavelet de referencia com as refletividades"
+    print "showing amplitudes (observations) that result from convolving the wavelet and the refletivities"
 
     # se estiver usando varios tracos de entrada
     cmap = 'gray'
@@ -446,27 +431,27 @@ def testeValendo():
 
     for picos in [15,20, 25, 30, 35, 40]: #{
         dt = time.localtime()
-        print "#####\nParametros de execucao:"
-        print "hora: ", time.time()
+        print "#####\nExecution params:"
+        print "time: ", time.time()
         strinstante = "%04d_%02d_%02d_%02d_%02d_%02d" % (dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min, dt.tm_sec)
         os.makedirs(strinstante, 0755)
-        print "data/hora: ", strinstante
+        print "date/time: ", strinstante
         print "l1: ", l1
         print "l2: ", l2
         print "l3: ", l3
         strinstante += "/"
 
-        print "vai rodar o procedimento tentanto encontrar ", picos, " picos"
-        print "metodo sendo testado:", teste
+        print "running procedure trying to find ", picos, " peaks"
+        print "method being tested:", teste
         (A,R,logCusto) = TSMF2(tracosAmplitude, picos, matToeplitzInicial, waveletInicial, lambda1 = l1, lambda2 = l2, lambda3 = l3, diretorio = strinstante, ref = ref, algoritmo = algoritmo)
         plt.plot(logCusto)
         plt.show()
-        print "Para ver se as matrizes de resultado estão realmente corretas"
-        print A.shape
-        print R.shape        
+        #print "Para ver se as matrizes de resultado estão realmente corretas"
+        #print A.shape
+        #print R.shape        
         
         
-        print "exibindo a wavelet resultante"
+        print "showing resulting wavelet"
         alphas = matrizToeplitz06.ToeplitzParaAlpha3(A, waveletInicial)
         plt.plot(alphas,linewidth=2.0)
         plt.show()
@@ -475,13 +460,13 @@ def testeValendo():
         np.save("Ref%02d_%s" % (picos, teste), R)
         np.save("Wav%02d_%s" % (picos, teste), alphas)
         
-        print "comparando a refletividade de gabarito com a obtida pelo procedimento"
-        print "referencia em vermelho, encontrado em azul"
+        print "comparing original and obtainded reflectivity"
+        print "reference in red, obtained in blue"
         plt.plot(ref,'r-',linewidth=2.0)
         plt.plot(R,'b-',linewidth=2.0)
         plt.show()
         
-        print "comparando amplitudes original com as geradas (vermelho: original; azul: gerado)"
+        print "comparing original and obtained amplitudes (red: original; blue: extracted)"
         plt.plot(tracosAmplitude,'r-',linewidth=2.0)
         plt.plot(A*R,'b-',linewidth=2.0)
         plt.show()
@@ -489,7 +474,7 @@ def testeValendo():
         (minv, maxv) = (np.min(tracosAmplitude), np.max(tracosAmplitude))
         erro = tracosAmplitude - A*R
         erro2 = np.linalg.norm(erro.T)**2
-        print "erro2:", erro2
+        print "error2:", erro2
         mse = erro2 / float(np.prod(tracosAmplitude.shape))
         print "MSE:", mse
         print "PSNR:", 20. * math.log10((maxv-minv) / math.sqrt(mse))
@@ -508,64 +493,7 @@ def testeValendo():
     plt.show(imgplot)
 #}}}
 
-#{{{ TODO: testeValendo2: variacao exploratoria dos parametros de execucao do metodo
-def testeValendo2(l1 = 1.0):
-#    observacoes = amplitudesDoArtigoComRuido()
-    # exibirAmplitudesArtigo()
-
-    lambda1_ar = [0.01, 0.05, 0.1, 0.5, 1., 5., 10., 50., 100.]
-    lambda2_ar = [0., 0.0001, 0.001, 0.01, 0.1, 1., 10.0, 100.0]
-    lambda3_ar = [0., 0.0001, 0.001, 0.01, 0.1, 1., 10.0, 100.0]
-    ruidos = [0., 0.01, 0.05, 0.1, 0.2, 0.5]
-    esparsidades = [32, 48, 64, 96, 128]
-    rotacoes = [-90., -75., -60., -45., -30., -20., -10., -5., 0., 5., 10., 20., 30., 45., 60., 75., 90.]
-    frequencias = [10., 20., 30., 40., 50.]
-    pesos_vies = [1., 4., 16., 64., 256., 1024.]
-    
-    for pes in pesos_vies:
-        for ruid in ruidos:
-            for freq in frequencias:
-                for rot in rotacoes:
-                    for rotRec in rotacoes:
-                        for esp in esparsidades:
-                            for l2 in lambda2_ar:
-                                for l3 in lambda3_ar:
-                                    dt = time.localtime()
-                                    print "\n!### %.3f" % l1
-                                    print "#####\nParametros de execucao:"
-                                    print "hora: ", time.time()
-                                    strinstante = "%04d_%02d_%02d_%02d_%02d_%02d" % (dt.tm_year, dt.tm_mon, dt.tm_mday, dt.tm_hour, dt.tm_min, dt.tm_sec)
-                                    os.makedirs(strinstante, 0755)
-                                    print "data/hora: ", strinstante
-                                    print "peso: ", pes
-                                    print "ruido: ", ruid
-                                    print "freq: ", freq
-                                    print "rot geracao: ", rot
-                                    print "rot recuperacao: ", rotRec
-                                    print "esparsidade: ", esp
-                                    print "l1: ", l1
-                                    print "l2: ", l2
-                                    print "l3: ", l3
-                                    strinstante += "/"
-                                    
-                                    observacoes = amplitudesDoArtigoComRuido2(ruid, rot, freq)[::10]
-    
-                                    mn = np.mean(observacoes)
-                                    st = np.std(observacoes)
-                                    A1 = np.matrix(np.copy(observacoes))
-                                    A1 = A1 - mn
-                                    A1 = A1 / st
-                                
-                                    T = montaMatrizToeplitzComRickerArtigoComRuido(ruid, rotRec, freq)
-                                    print "!!! Chamando TSMF2! "
-                                    (A,R,logCusto) = TSMF2(A1.T, esp, T, l1, l2, l3, pes, strinstante)
-                                    np.save(strinstante+"Wl",A)
-                                    np.save(strinstante+"Ref",R)
-                                    print "===> Finalizon!!! hora: ", time.time()
-#}}} // fim testeValendo2
-
-
 ## {{ Principal:
 if __name__ == "__main__":
-    testeValendo()
+    mainTest()
 ## }}     
