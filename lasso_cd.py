@@ -108,108 +108,6 @@ def passoFISTAConstanteCD(medidas_A, parametros_xk, observacoes_b, lmbda, xk_men
     return (ykp1, xk, tkp1)
 #}}}
 
-#{{{ FISTA_CD (substitui FISTA_CD_Loop)
-def FISTA_CD(medidas_A, parametros_x, observacoes_b, opcoes):
-    # configuracao do metodo
-    usarLog = False
-    if (opcoes.has_key("retornar_log") and opcoes["retornar_log"]):
-        usarLog = True
-        logCusto = []
-    limiteIteracoes = 100000 # limito a 100.000 de iteracoes
-    if (opcoes.has_key("iteracoes") and opcoes["iteracoes"] > 0):
-        limiteIteracoes = opcoes["iteracoes"]
-    limiarMagParam = 1e-15
-    if (opcoes.has_key("limiar_magnitude_parametro") and opcoes["limiar_magnitude_parametro"] > 0.0):
-        limiarMagParam = opcoes["limiar_magnitude_parametro"]
-    fator = 2.0 # fator de escala a ser usado no custo e no gradiente
-    if (opcoes.has_key("fator") and opcoes["fator"] > 0.0):
-        fator = opcoes["fator"]
-    lmbda = 0.0
-    if (opcoes.has_key("lambda") and opcoes["lambda"] > 0.0):
-        lmbda = opcoes["lambda"]
-    regCol1 = False
-    if (opcoes.has_key("regularizar_col_1")):
-        regCol1 = opcoes["regularizar_col_1"]
-    
-    n = parametros_x.shape[0] # quantos parametros == quantas linhas tem no vetor de parametros
-    indices_escolhidos = range(n)
-    if (opcoes.has_key("indices_escolhidos")):
-        indices_escolhidos = opcoes["indices_escolhidos"]
-    x1 = parametros_x.copy()
-    # execucao FISTA
-    tk = 1.0
-    xkm1 = parametros_x.copy()
-    yk = parametros_x.copy()
-    it = 0
-    for i in xrange(limiteIteracoes): #{
-        (yk2, xkm1, tk) = passoFISTAConstanteCD(medidas_A, yk, observacoes_b, lmbda, xkm1, tk, indices_escolhidos, regCol1)
-        if (usarLog):
-            logCusto.append(lasso.custoLasso(medidas_A, yk2, observacoes_b, lmbda, 0.5*fator))
-        mags = np.abs(yk2 - yk)
-        yk[:,:] = yk2[:,:]
-        if (np.max(mags) < limiarMagParam):
-            break
-        it += 1
-        print it, " e:", np.max(mags)
-    #}
-    print "FISTA_CD executou", it, "iteracoes"
-    if (usarLog):
-        return (yk, logCusto)
-    else:
-        return yk
-#}}}
-
-#{{{ FISTA_CD (substitui FISTA_CD_Loop)
-def FISTA_CD_2(medidas_A, parametros_x, observacoes_b, opcoes):
-    # configuracao do metodo
-    usarLog = False
-    if (opcoes.has_key("retornar_log") and opcoes["retornar_log"]):
-        usarLog = True
-        logCusto = []
-    limiteIteracoes = 100000 # limito a 100.000 de iteracoes
-    if (opcoes.has_key("iteracoes") and opcoes["iteracoes"] > 0):
-        limiteIteracoes = opcoes["iteracoes"]
-    limiarMagParam = 1e-15
-    if (opcoes.has_key("limiar_magnitude_parametro") and opcoes["limiar_magnitude_parametro"] > 0.0):
-        limiarMagParam = opcoes["limiar_magnitude_parametro"]
-    fator = 2.0 # fator de escala a ser usado no custo e no gradiente
-    if (opcoes.has_key("fator") and opcoes["fator"] > 0.0):
-        fator = opcoes["fator"]
-    lmbda = 0.0
-    if (opcoes.has_key("lambda") and opcoes["lambda"] > 0.0):
-        lmbda = opcoes["lambda"]
-    regCol1 = False
-    if (opcoes.has_key("regularizar_col_1")):
-        regCol1 = opcoes["regularizar_col_1"]
-    
-    n = parametros_x.shape[0] # quantos parametros == quantas linhas tem no vetor de parametros
-    indices_escolhidos = range(n)
-    if (opcoes.has_key("indices_escolhidos")):
-        indices_escolhidos = opcoes["indices_escolhidos"]
-    x1 = parametros_x.copy()
-    # execucao FISTA
-    tk = 1.0
-    xkm1 = parametros_x.copy()
-    yk = parametros_x.copy()
-    it = 0
-    for i in xrange(limiteIteracoes): #{
-        (yk2, xkm1, tk) = passoFISTAConstanteCD(medidas_A, yk, observacoes_b, lmbda, xkm1, tk, indices_escolhidos, regCol1)
-        if (usarLog):
-            logCusto.append(lasso.custoLasso(medidas_A, yk2, observacoes_b, lmbda, 0.5*fator))
-        mags = np.abs(yk2 - yk)
-        yk[:,:] = yk2[:,:]
-        if (np.max(mags) < limiarMagParam):
-            break
-        it += 1
-        print it, " e:", np.max(mags)
-    #}
-    print "FISTA_CD executou", it, "iteracoes"
-    if (usarLog):
-        return (yk, logCusto)
-    else:
-        return yk
-#}}}
-
 #{{{ iteracaoCoordinateDescentST
 def iteracaoCoordinateDescentST(A, y, theta, j, lmbda):
     tt2 = np.matrix(theta.copy())
@@ -226,25 +124,6 @@ def iteracaoCoordinateDescentST(A, y, theta, j, lmbda):
     tt2[j,0] = sinal * max(0.0, abs(ttj) -  lmbda) 
     return (tt2, (j+1)%(theta.shape[0]))
 #}}}
-
-#
-#def passoISTACD_2(matrizMedidasA, y, theta, lmbda, j): #{
-#    (tt2, j_prox) = iteracaoCoordinateDescentST(matrizMedidasA, y, theta, j, lmbda)
-#    return (tt2, j_prox)
-##}
-#
-#def ISTA_CD_2(matrizMedidasX, y, theta, lmbda, iteracoes): #{
-#    j = 0
-#    theta0 = theta.copy()
-#    for i in range(iteracoes + theta.shape[0] - (iteracoes % theta.shape[0])):
-#        (theta1, j) = passoISTACD_2(matrizMedidasX, y, theta0, lmbda, j)
-#        if ((np.linalg.norm(theta1-theta0) < 1e-8) and (j == 0)):
-#            print "ISTA_CD_2 executou", i/theta.shape[0], "iteracoes"
-#            break
-#        theta0[:,:] = theta1[:,:]
-#    return theta1
-#}
-#
 
 #{{{ normalizacao baseada em Hastie, Tibshirani e Wainwright (2015)
 def normalizacaoHTW(medidas_A, observacoes_b):
@@ -356,7 +235,6 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
     lmbda = 0.
     if (abs(cacheLambda) <= 1e-10): #{ # eh ~ zero
         for i in range(numPassosIntermediarios+1): #{
-            print "processando passo (esparsidade FISTA CD)", i
             lmbda = i * deltaPassosIntermediarios
             opcoes["lambda"] = lmbda
             if i==0:
@@ -387,7 +265,7 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
                 lambdaInferior = lmbda
                 espInf = esp
                 break
-            print "esparsidade ", esp, "com lambda ", lmbda
+            #print "esparsidade ", esp, "com lambda ", lmbda
         #} # for
     #} # if
     else: #{
@@ -409,11 +287,11 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
             if (esp == esparsidade):
                 encontreiEsparsidade = True
                 solucaoEncontrada = (b0, res)
-                if (it == 0):
-                    print ">>>>> Solucao aproveitada!"
-                else:
-                    print ">> Solucao encontrada por aproveitamento com ", it, "iteracoes"
-                break
+                #if (it == 0):
+                #    print ">>>>> Solucao aproveitada!"
+                #else:
+                #    print ">> Solucao encontrada por aproveitamento com ", it, "iteracoes"
+                #break
             if (esp > esparsidade):
                 encontreiMaior = True
                 lambdaSuperior = lmbda
@@ -422,7 +300,7 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
                 else:
                     lambdaInferior = 0.9*lambdaInferior + 0.1*lambdaMax # devo aumentar o valor de lambda para achatar mais parametros
                 espSup = esp
-                print "! Encontrei esparsidade SUPERIOR", espSup, "com lambda", lambdaSuperior
+                #print "! Encontrei esparsidade SUPERIOR", espSup, "com lambda", lambdaSuperior
                 parametrosSuperior = parametros_x.copy()
             else:
                 encontreiMenor = True
@@ -432,7 +310,7 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
                 else:
                     lambdaSuperior = 0.9 * lambdaSuperior
                 espInf = esp
-                print "Encontrei esparsidade INFERIOR", espInf, "com lambda", lambdaInferior
+                #print "Encontrei esparsidade INFERIOR", espInf, "com lambda", lambdaInferior
             it += 1
         #}
     #}
@@ -440,14 +318,14 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
     if (encontreiEsparsidade):
         return (solucaoEncontrada, lmbda)
     else:
-        print "devo fazer busca binaria ate achar a esparsidade que preciso (%.3f, %.3f) <-> (%d,%d)" % (lambdaSuperior,lambdaInferior,espSup, espInf)
+        # print "devo fazer busca binaria ate achar a esparsidade que preciso (%.3f, %.3f) <-> (%d,%d)" % (lambdaSuperior,lambdaInferior,espSup, espInf)
         parametros_x = parametrosSuperior.copy()
         limiteIteracoes = 100
         it = 0
         
         while (not encontreiEsparsidade): #{
             lmbda = (0.5*(lambdaSuperior + lambdaInferior))
-            print "processando lambda:", lmbda
+            #print "processando lambda:", lmbda
             opcoes["lambda"] = lmbda
             
             novos_parametros = FISTASpams(A4, bCentrado, parametros_x, lmbda * A4.shape[0], 1000)
@@ -460,18 +338,18 @@ def corteEsparsidadeFISTACD(medidas_A, parametros_x, observacoes_b, esparsidade,
                 solucaoEncontrada = (b0, res)
                 break
             if (esp > esparsidade):
-                print "foi maior", esp," lambda = ", lmbda
+                # print "foi maior", esp," lambda = ", lmbda
                 segundaMelhorSolucao = (b0, res)
                 if abs(lambdaSuperior - lmbda) <= 1e-12:
-                    print "retornando segunda melhor por precisao numerica"
+                    # print "retornando segunda melhor por precisao numerica"
                     return segundaMelhorSolucao
                 lambdaSuperior = lmbda
             else:
-                print "foi menor", esp," lambda = ", lmbda
+                # print "foi menor", esp," lambda = ", lmbda
                 lambdaInferior = lmbda
             it += 1
             if (it >= limiteIteracoes):
-                print "vai retornar a segunda melhor"
+                # print "vai retornar a segunda melhor"
                 return (segundaMelhorSolucao, lmbda)
         #} // while
     return (solucaoEncontrada, lmbda)
