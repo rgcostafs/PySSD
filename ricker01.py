@@ -120,5 +120,5 @@ if __name__ == "__main__":
     else:
         for frequencia in range(10,50,10):
             for angulo in range(-90,90,15):
-                print "Exibindo ricker com angulo %d e freq %d\n" % (angulo, frequencia)
+                print "Showing ricker with angle %d and dom. freq. %d\n" % (angulo, frequencia)
                 exibeRickerDeAcordoComOArtigo2(float(angulo), float(frequencia))
