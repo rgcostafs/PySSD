@@ -44,8 +44,6 @@ def coordenadaDescendente(medidas_A, parametros_x, observacoes_b, opcoes): #{
                 logCusto.append(gd.custoMQO(medidas_A, x1, observacoes_b))
         if (np.max(mags) < limiarMagParam):
             break
-        if (i % 10) == 0:
-            print "it cd: ", i, " np.max(mags) ", np.max(mags)
     #}
     if (usarLog):
         return (x1, logCusto)
